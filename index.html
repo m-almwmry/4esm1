@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة التحويل العملية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #1565C0;
+            --accent-color: #FFC107;
+            --background-color: #f8f9fa;
+            --text-color: #2d3436;
+            --border-color: #dfe6e9;
+            --gradient: linear-gradient(135deg, #2E7D32 0%, #1565C0 100%);
+        }
+
+        .dark-mode {
+            --background-color: #2d2d2d;
+            --text-color: #ffffff;
+            --border-color: #555555;
+            --gradient: linear-gradient(135deg, #1B5E20 0%, #0D47A1 100%);
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .container {
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        .dark-mode .container {
+            background: #363636;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input, select, button {
+            padding: 12px 20px;
+            margin: 5px 0;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--background-color);
+            color: var(--text-color);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .settings {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .result {
+            font-size: 1.5em;
+            padding: 20px;
+            background: var(--gradient);
+            color: white;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--accent-color);
+            padding: 12px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .google-play-badge {
+            width: 180px;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .google-play-badge:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            input, select, button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌓</button>
+
+    <div class="settings">
+        <select id="dollarRateMode" onchange="toggleRateInput()">
+            <option value="auto">تلقائي (535)</option>
+            <option value="manual">يدوي</option>
+        </select>
+        <input type="number" id="manualRate" style="display: none;" placeholder="أدخل السعر يدويًا">
+    </div>
+
+    <div class="container">
+        <div class="input-group">
+            <input type="number" id="amount" placeholder="أدخل المبلغ بالعملة المحلية">
+            <button onclick="pasteAmount()">
+                <span>📋</span> لصق
+            </button>
+            <button onclick="clearAmount()">
+                <span>🧹</span> تفريغ
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="result" id="result">0.0000</div>
+    </div>
+
+    <div class="container">
+        <button onclick="copyResult()">
+            <span>📄</span> نسخ النتيجة
+        </button>
+    </div>
+
+    <div class="footer">
+        <a href="https://play.google.com/store" target="_blank" rel="noopener">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                 alt="متجر جوجل بلاي" 
+                 class="google-play-badge">
+        </a>
+    </div>
+
+    <script>
+        let dollarRate = 535;
+        const manualRateInput = document.getElementById('manualRate');
+        const resultElement = document.getElementById('result');
+
+        function calculate() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const result = amount / dollarRate;
+            resultElement.textContent = result.toFixed(4);
+        }
+
+        function toggleRateInput() {
+            const mode = document.getElementById('dollarRateMode').value;
+            if (mode === 'manual') {
+                manualRateInput.style.display = 'inline-block';
+                dollarRate = parseFloat(manualRateInput.value) || 535;
+            } else {
+                manualRateInput.style.display = 'none';
+                dollarRate = 535;
+            }
+            calculate();
+        }
+
+        async function pasteAmount() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('amount').value = text;
+                calculate();
+            } catch (error) {
+                alert('تعذر الوصول إلى الحافظة');
+            }
+        }
+
+        function clearAmount() {
+            document.getElementById('amount').value = '';
+            calculate();
+        }
+
+        async function copyResult() {
+            try {
+                await navigator.clipboard.writeText(resultElement.textContent);
+                alert('تم نسخ النتيجة بنجاح!');
+            } catch (error) {
+                alert('تعذر النسخ إلى الحافظة');
+            }
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // Event Listeners
+        document.getElementById('amount').addEventListener('input', calculate);
+        manualRateInput.addEventListener('input', () => {
+            dollarRate = parseFloat(manualRateInput.value) || 535;
+            calculate();
+        });
+    </script>
+</body>
+</html>
