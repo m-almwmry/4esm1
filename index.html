@@ -6,6 +6,7 @@
     <title>حاسبة التحويل العملية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        /* نفس الأنماط السابقة بدون تعديل */
         :root {
             --primary-color: #1976D2;
             --secondary-color: #0D47A1;
@@ -28,7 +29,7 @@
             background: var(--background-color);
             color: var(--text-color);
             transition: all 0.3s ease;
-            padding: 20px;
+            padding: 15px;
             max-width: 800px;
             margin: 0 auto;
             min-height: 100vh;
@@ -36,10 +37,10 @@
 
         .container {
             border: 1px solid var(--border-color);
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             background: #ffffff;
         }
 
@@ -48,21 +49,23 @@
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         input, select, button {
-            padding: 12px 20px;
-            margin: 5px 0;
+            padding: 12px 15px;
+            margin: 4px 0;
             border: 2px solid var(--border-color);
             border-radius: 8px;
             background: var(--background-color);
             color: var(--text-color);
             font-size: 16px;
             transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         button {
@@ -72,92 +75,103 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
+            flex: 1 1 auto;
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             background: var(--secondary-color);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
         .settings {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             display: flex;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
+        .result-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
         .result {
-            font-size: 1.5em;
-            padding: 20px;
+            font-size: 1.3em;
+            padding: 15px;
             background: var(--gradient);
             color: white;
             border-radius: 8px;
-            margin-top: 15px;
             text-align: center;
             font-weight: 700;
+            flex: 1;
         }
 
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
+        .copy-result-btn {
+            padding: 12px 20px;
+            font-size: 1em;
         }
 
         .dark-mode-toggle {
             position: fixed;
-            top: 20px;
-            left: 20px;
+            top: 15px;
+            left: 15px;
             background: var(--accent-color);
             color: white;
-            padding: 12px 20px;
-            border-radius: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 10px 18px;
+            border-radius: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             border: 2px solid white;
             z-index: 1000;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 14px;
         }
 
         .google-play-badge {
-            width: 180px;
+            width: 160px;
             height: auto;
             transition: transform 0.3s ease;
         }
 
-        .google-play-badge:hover {
-            transform: scale(1.05);
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
             body {
-                padding: 15px;
+                padding: 10px;
             }
             
             .container {
-                padding: 20px;
+                padding: 15px;
             }
             
-            input, select, button {
-                width: 100%;
-                justify-content: center;
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            input, select {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .result {
+                font-size: 1.1em;
+                padding: 12px;
+            }
+            
+            .dark-mode-toggle {
+                top: 10px;
+                left: 10px;
+                padding: 8px 12px;
+                font-size: 12px;
             }
             
             .input-group {
                 flex-direction: column;
-            }
-
-            .dark-mode-toggle {
-                top: 10px;
-                left: 10px;
-                padding: 10px 15px;
-                font-size: 14px;
             }
         }
     </style>
@@ -186,13 +200,12 @@
     </div>
 
     <div class="container">
-        <div class="result" id="result">0.0000</div>
-    </div>
-
-    <div class="container">
-        <button onclick="copyResult()">
-            <span>📄</span> نسخ النتيجة
-        </button>
+        <div class="result-container">
+            <div class="result" id="result">0.000</div> <!-- تم التعديل هنا -->
+            <button class="copy-result-btn" onclick="copyResult()">
+                <span>📄</span> نسخ
+            </button>
+        </div>
     </div>
 
     <div class="footer">
@@ -211,7 +224,7 @@
         function calculate() {
             const amount = parseFloat(document.getElementById('amount').value) || 0;
             const result = amount / dollarRate;
-            resultElement.textContent = result.toFixed(4);
+            resultElement.textContent = result.toFixed(3); // تم التعديل هنا من 4 إلى 3
         }
 
         function toggleRateInput() {
@@ -244,9 +257,9 @@
         async function copyResult() {
             try {
                 await navigator.clipboard.writeText(resultElement.textContent);
-                alert('تم نسخ النتيجة بنجاح!');
+                alert('تم النسخ بنجاح ✓');
             } catch (error) {
-                alert('تعذر النسخ إلى الحافظة');
+                alert('تعذر النسخ ❌');
             }
         }
 
